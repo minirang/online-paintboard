@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Online Paintboard</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Online Paintboard is a collaborative drawing application that allows users to create and share artwork in real-time.">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta property="og:site_name" content="Online Paintboard" />
+    <meta property="og:title" content="Online Paintboard" />
+    <meta property="og:description"
+        content="Online Paintboard is a collaborative drawing application that allows users to create and share artwork in real-time." />
+    <meta property="og:image" content="#" />
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:url" content="https://online-paintboard.vercel.app" />
+</head>
+
+<body>
+    <header>
+        <a href="https://minirang.vercel.app"><img
+                src="https://raw.githubusercontent.com/minirang/minirang-logo/main/logo.svg" alt="Logo"></a>
+        <h1>Online Paintboard</h1>
+        <input type="range" id="brushSize" min="1" max="50" value="5">
+        <input type="color" id="brushColor" value="#000000">
+    </header>
+    <canvas id="paintCanvas"></canvas>
+
+    <script type="module" src="/src/main.ts"></script>
+</body>
+
+</html>
