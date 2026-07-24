@@ -2,6 +2,7 @@ $bg-color: #f6f8fa;
 $header-bg: #ffffff;
 $border-color: #d0d7de;
 $text-color: #24292f;
+$primary-color: #0969da;
 
 * {
     box-sizing: border-box;
@@ -46,18 +47,70 @@ body {
         }
 
         input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 120px;
+            height: 6px;
+            background: #e1e4e8;
+            border-radius: 3px;
+            outline: none;
             cursor: pointer;
             margin-left: auto;
+            transition: background 0.2s ease;
+
+            &:hover {
+                background: #d1d5da;
+            }
+
+            &::-webkit-slider-thumb {
+                -webkit-appearance: none;
+                appearance: none;
+                width: 16px;
+                height: 16px;
+                border-radius: 50%;
+                background: $header-bg;
+                border: 2px solid $primary-color;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                transition: transform 0.1s ease, background 0.1s ease;
+            }
+
+            &:active::-webkit-slider-thumb {
+                transform: scale(1.15);
+                background: $primary-color;
+            }
         }
 
         input[type="color"] {
+            -webkit-appearance: none;
+            appearance: none;
             border: 1px solid $border-color;
-            border-radius: 6px;
+            border-radius: 8px;
             background: none;
             cursor: pointer;
-            width: 36px;
-            height: 36px;
+            width: 34px;
+            height: 34px;
             padding: 0;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            transition: border-color 0.2s ease, transform 0.1s ease;
+
+            &::-webkit-color-swatch-wrapper {
+                padding: 0;
+            }
+
+            &::-webkit-color-swatch {
+                border: none;
+                border-radius: 7px;
+            }
+
+            &:hover {
+                border-color: #8c959f;
+                transform: translateY(-1px);
+            }
+
+            &:active {
+                transform: translateY(0);
+            }
         }
     }
 
