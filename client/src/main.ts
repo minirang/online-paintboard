@@ -1,4 +1,5 @@
 import './style.scss';
+
 const brushColor = document.getElementById('brushColor') as HTMLInputElement;
 const brushColorSpan = document.getElementById('brushColorValue') as HTMLSpanElement;
 brushColor.addEventListener('input', (event) => {
@@ -7,10 +8,14 @@ brushColor.addEventListener('input', (event) => {
     brushColorSpan.textContent = selectedColor.toUpperCase();
 });
 
-
 const brushSize = document.getElementById('brushSize') as HTMLInputElement;
 const brushSizeValue = document.getElementById('brushSizeValue') as HTMLSpanElement;
 brushSize.addEventListener('input', (e) => {
     const target = e.target as HTMLInputElement;
     brushSizeValue.textContent = target.value;
 });
+
+
+const canvas = document.getElementById('canvas') as HTMLCanvasElement;
+const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
+let isDrawing: boolean = false;

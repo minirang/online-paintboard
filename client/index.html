@@ -4,31 +4,43 @@
 <head>
     <title>Online Paintboard</title>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=3.0, user-scalable=yes" />
     <meta name="description"
-        content="Online Paintboard is a collaborative drawing application that allows users to create and share artwork in real-time.">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        content="Online Paintboard is a collaborative drawing application that allows users to create and share artwork in real-time." />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta property="og:site_name" content="Online Paintboard" />
     <meta property="og:title" content="Online Paintboard" />
     <meta property="og:description"
         content="Online Paintboard is a collaborative drawing application that allows users to create and share artwork in real-time." />
     <meta property="og:image" content="#" />
-    <meta property="og:image:width" content="1200">
-    <meta property="og:image:height" content="630">
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
     <meta property="og:url" content="https://online-paintboard.vercel.app" />
 </head>
 
 <body>
     <header>
-        <a href="https://minirang.vercel.app"><img
-                src="https://raw.githubusercontent.com/minirang/minirang-logo/main/logo.svg" alt="Logo"></a>
-        <h1>Online Paintboard</h1>
-        <input type="range" id="brushSize" min="1" max="20" value="5">
-        <p>Brush Size: <span id="brushSizeValue">5</span></p>
-        <input type="color" id="brushColor" value="#000000">
-        <p>Brush Color: <span id="brushColorValue">#000000</span></p>
+        <div class="logo_area">
+            <a href="https://minirang.vercel.app">
+                <img src="https://raw.githubusercontent.com/minirang/minirang-logo/main/logo.svg" alt="Logo" height="40"
+                    title="개발자의 웹사이트로 이동">
+            </a>
+            <h1>Online Paintboard</h1>
+        </div>
+        <div class="control_area">
+            <div class="slider_row">
+                <input type="range" id="brushSize" min="1" max="20" value="5" title="붓 크기">
+                <p>Brush Size: <span id="brushSizeValue">5</span></p>
+            </div>
+
+            <div class="color_row">
+                <input type="color" id="brushColor" value="#000000" title="붓 색깔">
+                <p>Brush Color: <span id="brushColorValue">#000000</span></p>
+            </div>
+        </div>
     </header>
-    <canvas id="paintCanvas"></canvas>
+    <canvas id="canvas"></canvas>
 
     <script type="module" src="/src/main.ts"></script>
 </body>
