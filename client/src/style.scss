@@ -82,6 +82,11 @@ body {
             border-left: 1.2px solid rgba(0, 0, 0, 0.08);
             padding-left: 20px;
 
+            .toggle {
+                display: flex;
+                align-items: center;
+            }
+
             .slider_row,
             .color_row {
                 display: flex;
@@ -185,13 +190,51 @@ body {
         }
     }
 
-    canvas {
-        background-color: #ffffff;
-        display: block;
+    .canvas_container {
         flex-grow: 1;
-        cursor: crosshair;
         min-height: 0;
-        touch-action: none;
+        overflow: auto;
+        background-color: $bg-color;
+        display: flex;
+        align-items: flex-start;
+        justify-content: flex-start;
+
+        &::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+        }
+
+        &::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        &::-webkit-scrollbar-thumb {
+            background-color: rgba(0, 0, 0, 0.15);
+            border-radius: 10px;
+            border: 2px solid $bg-color;
+            transition: background-color 0.2s ease;
+        }
+
+        &::-webkit-scrollbar-thumb:hover {
+            background-color: rgba(0, 0, 0, 0.3);
+        }
+
+        &::-webkit-scrollbar-thumb:active {
+            background-color: $primary-color;
+        }
+
+        &::-webkit-scrollbar-corner {
+            background: transparent;
+        }
+
+        canvas {
+            background-color: #ffffff;
+            display: block;
+            cursor: crosshair;
+            touch-action: none;
+            flex-shrink: 0;
+            border: 1px solid $border-color;
+        }
     }
 }
 
@@ -228,6 +271,10 @@ body {
                 gap: 12px;
                 height: auto;
 
+                .toggle {
+                    width: 100%;
+                }
+
                 .slider_row,
                 .color_row {
                     display: flex;
@@ -260,6 +307,85 @@ body {
                     flex-shrink: 0;
                 }
             }
+        }
+    }
+}
+
+// 토글 버튼
+$primary-color: #3b82f6;
+$bg-inactive: #e2e8f0;
+$slider-thumb: #ffffff;
+$transition-speed: 0.3s;
+
+.control_area {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+
+    .toggle {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+
+        .switch_label {
+            position: relative;
+            display: inline-block;
+            width: 44px;
+            height: 24px;
+            cursor: pointer;
+
+            .switch_input {
+                opacity: 0;
+                width: 0;
+                height: 0;
+
+                &:checked+.switch_slider {
+                    background-color: $primary-color;
+
+                    &::before {
+                        transform: translateX(20px);
+                    }
+                }
+
+                &:focus-visible+.switch_slider {
+                    box-shadow: 0 0 0 2px rgba($primary-color, 0.4);
+                }
+            }
+
+            .switch_slider {
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background-color: $bg-inactive;
+                border-radius: 999px;
+                transition: background-color $transition-speed ease;
+
+                &:hover {
+                    background-color: darken($bg-inactive, 5%);
+                }
+
+                &::before {
+                    content: "";
+                    position: absolute;
+                    height: 18px;
+                    width: 18px;
+                    left: 3px;
+                    bottom: 3px;
+                    background-color: $slider-thumb;
+                    border-radius: 50%;
+                    transition: transform $transition-speed cubic-bezier(0.4, 0, 0.2, 1);
+                    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+                }
+            }
+        }
+
+        .toggle_text {
+            font-size: 14px;
+            color: #333333;
+            font-weight: 500;
+            user-select: none;
         }
     }
 }

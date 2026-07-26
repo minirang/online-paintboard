@@ -29,6 +29,14 @@
             <h1>Online Paintboard</h1>
         </div>
         <div class="control_area">
+            <div class="toggle">
+                <label class="switch_label" for="paintToggle">
+                    <input type="checkbox" id="paintToggle" class="switch_input">
+                    <span class="switch_slider"></span>
+                </label>
+                <span class="toggle_text">그리기/이동 모드</span>
+            </div>
+
             <div class="slider_row">
                 <input type="range" id="brushSize" min="1" max="20" value="5" title="붓 크기">
                 <p>Brush Size: <span id="brushSizeValue">5</span></p>
@@ -40,7 +48,9 @@
             </div>
         </div>
     </header>
-    <canvas id="canvas"></canvas>
+    <div class="canvas_container">
+        <canvas id="canvas"></canvas>
+    </div>
 
     <script type="module" src="/src/main.ts"></script>
 </body>

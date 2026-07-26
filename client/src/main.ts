@@ -19,3 +19,7 @@ brushSize.addEventListener('input', (e) => {
 const canvas = document.getElementById('canvas') as HTMLCanvasElement;
 const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
 let isDrawing: boolean = false;
+canvas.width = 3200;
+canvas.height = 2400;
+ctx.lineCap = 'round';
+ctx.lineJoin = 'round';
