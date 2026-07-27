@@ -1,3 +1,4 @@
+@use "sass:color"; 
 $bg-color: #f6f8fa;
 $header-bg: #ffffff;
 $border-color: #d0d7de;
@@ -363,7 +364,7 @@ $transition-speed: 0.3s;
                 transition: background-color $transition-speed ease;
 
                 &:hover {
-                    background-color: darken($bg-inactive, 5%);
+                    background-color: color.adjust($bg-inactive, $lightness: -5%);
                 }
 
                 &::before {
