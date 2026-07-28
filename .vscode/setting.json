@@ -1,0 +1,7 @@
+{
+    "editor.formatOnPaste": false,
+    "typescript.updateImportsOnFileMove.enabled": "never",
+    "javascript.suggest.autoImports": false,
+    "typescript.suggest.autoImports": false,
+    "editor.quickSuggestionsDelay": 500
+}

@@ -1,4 +1,4 @@
-@use "sass:color"; 
+@use "sass:color";
 $bg-color: #f6f8fa;
 $header-bg: #ffffff;
 $border-color: #d0d7de;
@@ -235,6 +235,16 @@ body {
             touch-action: none;
             flex-shrink: 0;
             border: 1px solid $border-color;
+            -webkit-user-select: none;
+            user-select: none;
+
+            &.is-dragging {
+                cursor: grab;
+
+                &:active {
+                    cursor: grabbing;
+                }
+            }
         }
     }
 }
