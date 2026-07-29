@@ -1,26 +1,45 @@
 import './style.scss';
 
 const canvas = document.getElementById('canvas') as HTMLCanvasElement;
-const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
+const canvasContainer = document.querySelector('.canvas_container') as HTMLDivElement;
+const dpr = window.devicePixelRatio || 1;
+const logicalWidth = 3200;
+const logicalHeight = 2400;
+canvas.width = logicalWidth * dpr;
+canvas.height = logicalHeight * dpr;
+canvas.style.width = `${logicalWidth}px`;
+canvas.style.height = `${logicalHeight}px`;
+const worker = new Worker(new URL('./paint.worker.ts', import.meta.url), { type: 'module' });
+const offscreen = canvas.transferControlToOffscreen();
+const wsProtocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
+const isLocal = window.location.hostname === 'localhost' || window.location.hostname.startsWith('192.168.');
+const wsHost = isLocal ? `${window.location.hostname}:8000` : window.location.host;
+const wsURI = `${wsProtocol}${wsHost}/ws`;
+
+worker.postMessage({
+    type: 'INIT',
+    canvas: offscreen,
+    wsURI: wsURI,
+    width: canvas.width,
+    height: canvas.height,
+    dpr: dpr
+}, [offscreen]);
 
 const brushColor = document.getElementById('brushColor') as HTMLInputElement;
 const brushColorSpan = document.getElementById('brushColorValue') as HTMLSpanElement;
 brushColor.addEventListener('input', (e) => {
     const target = e.target as HTMLInputElement;
-    const selectedColor = target.value;
-    brushColorSpan.textContent = selectedColor.toUpperCase();
+    brushColorSpan.textContent = target.value.toUpperCase();
 });
 const brushSize = document.getElementById('brushSize') as HTMLInputElement;
 const brushSizeValue = document.getElementById('brushSizeValue') as HTMLSpanElement;
 brushSize.addEventListener('input', (e) => {
     const target = e.target as HTMLInputElement;
-    const selectedSize = target.value;
-    brushSizeValue.textContent = selectedSize;
+    brushSizeValue.textContent = target.value;
 });
 
 const paintToggle = document.getElementById('paintToggle') as HTMLInputElement;
 const toggleText = document.querySelector('.toggle_text') as HTMLSpanElement;
-const canvasContainer = document.querySelector('.canvas_container') as HTMLDivElement;
 let isDrawing: boolean = false;
 let isPaintMode: boolean = true;
 let isScroll: boolean = false;
@@ -28,12 +47,6 @@ let startX = 0;
 let startY = 0;
 let startScrollLeft = 0;
 let startScrollTop = 0;
-let lastX = 0;
-let lastY = 0;
-canvas.width = 3200;
-canvas.height = 2400;
-ctx.lineCap = 'round';
-ctx.lineJoin = 'round';
 
 canvas.addEventListener('contextmenu', (e: PointerEvent) => {
     e.preventDefault();
@@ -62,26 +75,24 @@ canvas.addEventListener('pointerdown', (e: PointerEvent) => {
     }
     else if (isPaintMode === true) {
         isDrawing = true;
-        lastX = e.offsetX;
-        lastY = e.offsetY;
-        ctx.strokeStyle = brushColor.value;
-        ctx.lineWidth = Number(brushSize.value);
-        ctx.beginPath();
-        ctx.moveTo(lastX, lastY);
-        ctx.lineTo(e.offsetX, e.offsetY);
-        ctx.stroke();
+        worker.postMessage({
+            type: 'DRAW_START',
+            offsetX: e.offsetX,
+            offsetY: e.offsetY,
+            color: brushColor.value,
+            size: Number(brushSize.value)
+        });
     }
 });
 canvas.addEventListener('pointermove', (e: PointerEvent) => {
     if (isDrawing === true && isPaintMode === true) {
-        ctx.strokeStyle = brushColor.value;
-        ctx.lineWidth = Number(brushSize.value);
-        ctx.beginPath();
-        ctx.moveTo(lastX, lastY);
-        ctx.lineTo(e.offsetX, e.offsetY);
-        ctx.stroke();
-        lastX = e.offsetX;
-        lastY = e.offsetY;
+        worker.postMessage({
+            type: 'DRAW_MOVE',
+            offsetX: e.offsetX,
+            offsetY: e.offsetY,
+            color: brushColor.value,
+            size: Number(brushSize.value)
+        });
     }
 });
 window.addEventListener('pointermove', (e: PointerEvent) => {
@@ -94,5 +105,8 @@ window.addEventListener('pointermove', (e: PointerEvent) => {
 });
 window.addEventListener('pointerup', () => {
     isScroll = false;
-    isDrawing = false;
+    if (isDrawing === true) {
+        isDrawing = false;
+        worker.postMessage({ type: 'DRAW_END' });
+    }
 });
