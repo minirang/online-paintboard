@@ -2,13 +2,8 @@ import './style.scss';
 
 const canvas = document.getElementById('canvas') as HTMLCanvasElement;
 const canvasContainer = document.querySelector('.canvas_container') as HTMLDivElement;
-const dpr = window.devicePixelRatio || 1;
-const logicalWidth = 3200;
-const logicalHeight = 2400;
-canvas.width = logicalWidth * dpr;
-canvas.height = logicalHeight * dpr;
-canvas.style.width = `${logicalWidth}px`;
-canvas.style.height = `${logicalHeight}px`;
+canvas.width = 3200;
+canvas.height = 2400;
 const worker = new Worker(new URL('./paint.worker.ts', import.meta.url), { type: 'module' });
 const offscreen = canvas.transferControlToOffscreen();
 const wsProtocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
@@ -21,8 +16,7 @@ worker.postMessage({
     canvas: offscreen,
     wsURI: wsURI,
     width: canvas.width,
-    height: canvas.height,
-    dpr: dpr
+    height: canvas.height
 }, [offscreen]);
 
 const brushColor = document.getElementById('brushColor') as HTMLInputElement;

@@ -2,10 +2,9 @@ let ctx: OffscreenCanvasRenderingContext2D | null = null;
 let ws: WebSocket | null = null;
 let lastX = 0;
 let lastY = 0;
-let workerDpr = 1;
 
 self.onmessage = (e: MessageEvent) => {
-    const { type, canvas, wsURI, width, height, offsetX, offsetY, color, size, dpr } = e.data;
+    const { type, canvas, wsURI, width, height, offsetX, offsetY, color, size } = e.data;
 
     switch (type) {
         case 'INIT':
@@ -14,8 +13,7 @@ self.onmessage = (e: MessageEvent) => {
             ctx = canvas.getContext('2d') as OffscreenCanvasRenderingContext2D;
             ctx.lineCap = 'round';
             ctx.lineJoin = 'round';
-            workerDpr = dpr || 1;
-            ctx.scale(workerDpr, workerDpr);
+
             ws = new WebSocket(wsURI);
             ws.onopen = () => {
                 console.log('Worker: WebSocket connection established');
@@ -43,12 +41,14 @@ self.onmessage = (e: MessageEvent) => {
             ctx.moveTo(lastX, lastY);
             ctx.lineTo(offsetX, offsetY);
             ctx.stroke();
+            ctx.lineTo(offsetX + 0.1, offsetY + 0.1);
+            ctx.stroke();
 
             const startData = {
                 lastX: offsetX,
                 lastY: offsetY,
-                currentX: offsetX,
-                currentY: offsetY,
+                currentX: offsetX + 0.1,
+                currentY: offsetY + 0.1,
                 color: color,
                 size: size
             };
@@ -59,23 +59,25 @@ self.onmessage = (e: MessageEvent) => {
 
         case 'DRAW_MOVE':
             if (!ctx) return;
+            const smoothX = lastX * 0.8 + offsetX * 0.2;
+            const smoothY = lastY * 0.8 + offsetY * 0.2;
             ctx.strokeStyle = color;
             ctx.lineWidth = size;
             ctx.beginPath();
             ctx.moveTo(lastX, lastY);
-            ctx.lineTo(offsetX, offsetY);
+            ctx.lineTo(smoothX, smoothY);
             ctx.stroke();
 
             const drawData = {
                 lastX: lastX,
                 lastY: lastY,
-                currentX: offsetX,
-                currentY: offsetY,
+                currentX: smoothX,
+                currentY: smoothY,
                 color: color,
                 size: size
             };
-            lastX = offsetX;
-            lastY = offsetY;
+            lastX = smoothX;
+            lastY = smoothY;
             if (ws && ws.readyState === WebSocket.OPEN) {
                 ws.send(JSON.stringify(drawData));
             }
