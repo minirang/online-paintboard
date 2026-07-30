@@ -21,7 +21,6 @@ self.onmessage = (e: MessageEvent) => {
             ws.onmessage = (msgEvent) => {
                 if (!ctx) return;
                 const rawData = JSON.parse(msgEvent.data);
-
                 ctx.strokeStyle = rawData.color;
                 ctx.lineWidth = Number(rawData.size);
                 ctx.beginPath();
