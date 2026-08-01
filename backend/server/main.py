@@ -24,9 +24,11 @@ conn.commit()
 active_connections = []
 app = FastAPI()
 
+
 @app.get("/")
 def read_root():
     return {"message": "Welcome"}
+
 
 @app.delete("/api/clear")
 def clear_canvas():
@@ -63,6 +65,9 @@ async def websocket_endpoint(websocket: WebSocket):
         while True:
             raw_data = await websocket.receive_text()
             data = json.loads(raw_data)
+
+            if not (1 <= int(data["size"]) <= 20):
+                continue
 
             cursor.execute(
                 """
