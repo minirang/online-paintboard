@@ -2,8 +2,8 @@ import './style.scss';
 
 const canvas = document.getElementById('canvas') as HTMLCanvasElement;
 const canvasContainer = document.querySelector('.canvas_container') as HTMLDivElement;
-canvas.width = 3200;
-canvas.height = 2400;
+canvas.width = 6400;
+canvas.height = 4800;
 const worker = new Worker(new URL('./paint.worker.ts', import.meta.url), { type: 'module' });
 const offscreen = canvas.transferControlToOffscreen();
 const wsProtocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
