@@ -7,7 +7,7 @@ Web Workers 병렬 처리 기반의 프론트엔드와 FastAPI 웹소켓, Supaba
 ## 배포 정보
 
 - 클라이언트 (프론트엔드): [https://online-paintboard.onrender.com](https://online-paintboard.onrender.com)
-- 백엔드: [https://online-paintboard.onrender.com](https://online-paintboard-backend.onrender.com)
+- 백엔드: [https://online-paintboard-backend.onrender.com](https://online-paintboard-backend.onrender.com)
 
 ---
 
