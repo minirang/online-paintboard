@@ -1,2 +1,12 @@
 // 사이트의 <canvas>의 그림을 다운로드하여 소장하고싶을 때 사용하는 코드입니다. 자바스크립트이며, F12를 눌러 나오는 DevTool의 Console에서 코드를 실행합니다.
-(()=>{const e=document.getElementById("canvas");if(!e)return void console.error("canvas 요소를 찾을 수 없습니다.");const t=document.createElement("canvas");t.width=e.width,t.height=e.height;const o=t.getContext("2d");o.drawImage(e,0,0),o.globalCompositeOperation="destination-over",o.fillStyle="#FFFFFF",o.fillRect(0,0,t.width,t.height);const n=t.toDataURL("image/png"),a=document.createElement("a");a.href=n,a.download=`paintboard_${Date.now()}.png`,document.body.appendChild(a),a.click(),document.body.removeChild(a),console.log("다운로드 완료")})();
+(() => {
+    const e = document.getElementById("canvas");
+    if (!e) return void console.error("canvas 요소를 찾을 수 없습니다.");
+    const t = document.createElement("canvas");
+    t.width = e.width, t.height = e.height;
+    const o = t.getContext("2d");
+    o.drawImage(e, 0, 0), o.globalCompositeOperation = "destination-over", o.fillStyle = "#FFFFFF", o.fillRect(0, 0, t.width, t.height);
+    const n = t.toDataURL("image/png"),
+        a = document.createElement("a");
+    a.href = n, a.download = `paintboard_${Date.now()}.png`, document.body.appendChild(a), a.click(), document.body.removeChild(a), console.log("다운로드 완료")
+})();
