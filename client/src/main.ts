@@ -8,7 +8,7 @@ const worker = new Worker(new URL('./paint.worker.ts', import.meta.url), { type:
 const offscreen = canvas.transferControlToOffscreen();
 const wsProtocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
 const isLocal = window.location.hostname === 'localhost' || window.location.hostname.startsWith('192.168.');
-const wsHost = isLocal ? `${window.location.hostname}:8000` : '://onrender.com';
+const wsHost = isLocal ? `${window.location.hostname}:8000` : window.location.host.replace('-frontend', '-backend');
 const wsURI = `${wsProtocol}${wsHost}/ws`;
 
 worker.postMessage({
