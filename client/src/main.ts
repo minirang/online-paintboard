@@ -7,8 +7,10 @@ canvas.height = 4800;
 const worker = new Worker(new URL('./paint.worker.ts', import.meta.url), { type: 'module' });
 const offscreen = canvas.transferControlToOffscreen();
 const wsProtocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
-const isLocal = window.location.hostname === 'localhost' || window.location.hostname.startsWith('192.168.');
-const wsHost = isLocal ? `${window.location.hostname}:8000` : window.location.host.replace('-frontend', '-backend');
+const isLocal = import.meta.env.DEV;
+const wsHost = isLocal
+    ? `${window.location.hostname}:8000`
+    : window.location.host.slice(0, window.location.host.indexOf('.')) + '-backend' + window.location.host.slice(window.location.host.indexOf('.'));
 const wsURI = `${wsProtocol}${wsHost}/ws`;
 
 worker.postMessage({
