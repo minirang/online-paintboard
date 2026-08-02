@@ -1,4 +1,4 @@
-// 사이트의 <canvas>의 그림을 다운로드하여 소장하고싶을 때 사용하는 코드입니다. 자바스크립트이며, F12를 눌러 나오는 DevTool의 Console에서 코드를 실행합니다.
+// 사이트의 <canvas>의 그림을 다운로드하여 소장하고싶을 때 사용하는 코드입니다. 자바스크립트이며, F12를 눌러 나오는 DevTool의 Console 탭에서 코드를 실행합니다.
 (() => {
     const e = document.getElementById("canvas");
     if (!e) return void console.error("canvas 요소를 찾을 수 없습니다.");
