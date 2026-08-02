@@ -4,3 +4,4 @@ dist/
 venv/
 *.log
 paintboard.db
+.env
