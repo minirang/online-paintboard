@@ -1,5 +1,9 @@
 # online-paintboard
 
+<p align="center">
+   <img src="https://raw.githubusercontent.com/minirang/online-paintboard/main/client/public/images/thumbnail.png">
+</p>
+
 Web Workers 병렬 처리 기반의 프론트엔드와 FastAPI 웹소켓, Supabase 데이터베이스를 연동한 **실시간 공동 그림판 서비스**입니다.
 
 ---
