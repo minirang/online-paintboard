@@ -1,4 +1,5 @@
 ﻿fastapi==0.141.1
 psycopg2_binary==2.9.12
 python-dotenv==1.2.2
-uvicorn
+uvicorn[standard]
+websockets
