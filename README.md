@@ -6,20 +6,20 @@ Web Workers 병렬 처리 기반의 프론트엔드와 FastAPI 웹소켓, Supaba
 
 ## 배포 정보
 
-* **클라이언트 (프론트엔드)**: `https://online-paintboard.onrender.com`
-* **백엔드**: `https://online-paintboard-backend.onrender.com`
+- 클라이언트 (프론트엔드): [https://online-paintboard.onrender.com](https://online-paintboard.onrender.com)
+- 백엔드: [https://online-paintboard.onrender.com](https://online-paintboard-backend.onrender.com)
 
 ---
 
-## 핵심 기능 (Features)
+## 핵심 기능
 
-* **병렬 렌더링 최적화**: 메인 스레드의 UI 렌더링 부하를 최소화하기 위해 Canvas 픽셀 연산과 웹소켓 패킷 처리를 백그라운드 스레드(`Web Worker` & `OffscreenCanvas`)로 완전히 분리했습니다.
-* **주사율 맞춤형 렌더링 (`requestAnimationFrame`)**: 마우스/터치 이벤트를 매 순간 직접 그리지 않고 디스플레이 재생 주기에 맞춰 최신 좌표만 동기화하여 렌더링 및 통신 효율을 높였습니다.
-* **실시간 양방향 브로드캐스팅**: `FastAPI WebSocket`을 매개로 접속자 간의 드로잉 데이터를 실시간으로 동기화합니다.
-* **클라우드 데이터 보존 및 복원**: `Supabase(PostgreSQL)` 다이렉트 커넥션을 통해 그림 데이터를 저장하며, 새로고침 및 최초 입장 시 기존 데이터를 역대 순서대로 복원합니다.
-* **서버 사이드 보안 검증**: 프론트엔드 코드 변조를 통한 트롤링을 방지하기 위해 백엔드 패킷 수신 단계에서 최대 붓 크기(20 이하)를 강제 검증합니다.
-* **원격 도화지 초기화 (Admin API)**: `.env` 환경 변수와 연동되는 관리자 전용 POST 엔드포인트(`POST /api/clear`)를 통해 캔버스 데이터를 안전하게 일괄 삭제할 수 있습니다.
-* **모바일 렌더링 보정**: 모바일 브라우저 환경에서 시작점과 끝점이 일치할 때 드로잉이 생략되는 버그를 해결하기 위해 점 찍기 시 미세 가짜 길이(`+0.1px`)를 추가했습니다.
+- 병렬 렌더링 최적화: 메인 스레드의 UI 렌더링 부하를 최소화하기 위해 Canvas 픽셀 연산과 웹소켓 패킷 처리를 백그라운드 스레드(`Web Worker` & `OffscreenCanvas`)로 완전히 분리했습니다.
+- 주사율 맞춤형 렌더링 (`requestAnimationFrame`): 마우스/터치 이벤트를 매 순간 직접 그리지 않고 디스플레이 재생 주기에 맞춰 최신 좌표만 동기화하여 렌더링 및 통신 효율을 높였습니다.
+- 실시간 양방향 브로드캐스팅: `FastAPI WebSocket`을 매개로 접속자 간의 드로잉 데이터를 실시간으로 동기화합니다.
+- 클라우드 데이터 보존 및 복원: `Supabase(PostgreSQL)` 다이렉트 커넥션을 통해 그림 데이터를 저장하며, 새로고침 및 최초 입장 시 기존 데이터를 역대 순서대로 복원합니다.
+- 서버 사이드 보안 검증: 프론트엔드 코드 변조를 통한 트롤링을 방지하기 위해 백엔드 패킷 수신 단계에서 최대 붓 크기(20 이하)를 강제 검증합니다.
+- 원격 도화지 초기화 (Admin API): `.env` 환경 변수와 연동되는 관리자 전용 POST 엔드포인트(`POST /api/clear`)를 통해 캔버스 데이터를 안전하게 일괄 삭제할 수 있습니다.
+- 모바일 렌더링 보정: 모바일 브라우저 환경에서 시작점과 끝점이 일치할 때 드로잉이 생략되는 버그를 해결하기 위해 점 찍기 시 미세 가짜 길이(`+0.1px`)를 추가했습니다.
 
 ---
 
@@ -85,18 +85,18 @@ online-paintboard/
 
 ---
 
-## 🛠️ 기술 스택
+## 기술 스택
 
-### Frontend
+### 프론트엔드
 - TypeScript / Vite
 - Web Workers API / OffscreenCanvas API
 - WebSockets API
 
-### Backend
+### 백엔드
 - Python / FastAPI
 - Uvicorn / psycopg2-binary
 - python-dotenv / Pydantic
 
-### Infrastructure
+### 운영 환경
 - Supabase (PostgreSQL)
 - Render (Cloud Hosting)
