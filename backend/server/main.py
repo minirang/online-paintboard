@@ -16,6 +16,7 @@ conn = psycopg2.connect(DB_URL)
 print("Connected to the database.")
 active_connections = []
 pending_tokens = set()
+db_queue = asyncio.Queue()
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
@@ -26,27 +27,40 @@ app.add_middleware(
 )
 
 
-async def save_to_db_background(data):
-    await asyncio.to_thread(_sync_save, data)
+async def db_bulk_worker():
+    while True:
+        await asyncio.sleep(0.5)
+        if db_queue.empty():
+            continue
+
+        batch = []
+        while not db_queue.empty() and len(batch) < 500:
+            batch.append(await db_queue.get())
+            db_queue.task_done()
+
+        if batch:
+            await asyncio.to_thread(_sync_bulk_save, batch)
 
 
-def _sync_save(data):
+def _sync_bulk_save(batch):
     cursor = conn.cursor()
     try:
+        args_str = ",".join(
+            cursor.mogrify(
+                "(%s, %s, %s, %s, %s, %s)",
+                (
+                    d["lastX"],
+                    d["lastY"],
+                    d["currentX"],
+                    d["currentY"],
+                    d["color"],
+                    d["size"],
+                ),
+            ).decode("utf-8")
+            for d in batch
+        )
         cursor.execute(
-            """
-            INSERT INTO draw_history
-            (lastX, lastY, currentX, currentY, color, size)
-            VALUES (%s, %s, %s, %s, %s, %s)
-            """,
-            (
-                data["lastX"],
-                data["lastY"],
-                data["currentX"],
-                data["currentY"],
-                data["color"],
-                data["size"],
-            ),
+            f"INSERT INTO draw_history (lastX, lastY, currentX, currentY, color, size) VALUES {args_str}"
         )
         conn.commit()
     except Exception as e:
@@ -134,7 +148,7 @@ async def websocket_endpoint(websocket: WebSocket, token: str = Query(None)):
                     except Exception:
                         pass
 
-            asyncio.create_task(save_to_db_background(data))
+            db_queue.put_nowait(data)
 
     except WebSocketDisconnect:
         if websocket in active_connections:
@@ -147,3 +161,8 @@ async def websocket_endpoint(websocket: WebSocket, token: str = Query(None)):
 
     finally:
         cursor.close()
+
+
+@app.on_event("startup")
+async def startup_event():
+    asyncio.create_task(db_bulk_worker())
