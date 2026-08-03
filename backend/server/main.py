@@ -3,6 +3,7 @@ import json
 import uuid
 import asyncio
 import psycopg2
+import concurrent.futures
 from pathlib import Path
 from dotenv import load_dotenv
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Query, status
@@ -17,6 +18,7 @@ print("Connected to the database.")
 active_connections = []
 pending_tokens = set()
 db_queue = asyncio.Queue()
+db_executor = concurrent.futures.ThreadPoolExecutor(max_workers=5)
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
@@ -39,7 +41,8 @@ async def db_bulk_worker():
             db_queue.task_done()
 
         if batch:
-            await asyncio.to_thread(_sync_bulk_save, batch)
+            loop = asyncio.get_running_loop()
+            await loop.run_in_executor(db_executor, _sync_bulk_save, batch)
 
 
 def _sync_bulk_save(batch):
@@ -134,19 +137,22 @@ async def websocket_endpoint(websocket: WebSocket, token: str = Query(None)):
             if not (1 <= int(data["size"]) <= 20):
                 continue
 
+            tasks = []
             for connection in active_connections[:]:
                 if connection == websocket:
                     continue
-                try:
-                    await connection.send_text(raw_data)
-                except Exception as e:
-                    print("Removing dead websocket:", e)
-                    if connection in active_connections:
-                        active_connections.remove(connection)
-                    try:
-                        await connection.close()
-                    except Exception:
-                        pass
+                tasks.append(connection.send_text(raw_data))
+
+            if tasks:
+                results = await asyncio.gather(*tasks, return_exceptions=True)
+                for res, connection in zip(results, active_connections[:]):
+                    if isinstance(res, Exception):
+                        if connection in active_connections:
+                            active_connections.remove(connection)
+                        try:
+                            await connection.close()
+                        except Exception:
+                            pass
 
             db_queue.put_nowait(data)
 
