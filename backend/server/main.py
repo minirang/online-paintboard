@@ -1,9 +1,10 @@
 import os
 import json
+import uuid
 import psycopg2
 from pathlib import Path
 from dotenv import load_dotenv
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Query, status
 from fastapi.middleware.cors import CORSMiddleware
 
 env_path = Path(__file__).parent / ".env"
@@ -13,13 +14,27 @@ DB_URL = os.getenv("DATABASE_URL")
 conn = psycopg2.connect(DB_URL)
 print("Connected to the database.")
 active_connections = []
+pending_tokens = set()
 app = FastAPI()
-app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_credentials=True, allow_methods=["*"], allow_headers=["*"])
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 @app.get("/")
 def read_root():
     return {"message": "Welcome"}
+
+
+@app.get("/api/token")
+def generate_one_time_token():
+    token = str(uuid.uuid4())
+    pending_tokens.add(token)
+    return {"token": token}
 
 
 @app.delete("/api/clear")
@@ -39,7 +54,12 @@ def clear_canvas():
 
 
 @app.websocket("/ws")
-async def websocket_endpoint(websocket: WebSocket):
+async def websocket_endpoint(websocket: WebSocket, token: str = Query(None)):
+    if not token or token not in pending_tokens:
+        await websocket.close(code=status.WS_1008_POLICY_VIOLATION)
+        return
+
+    pending_tokens.remove(token)
     await websocket.accept()
     cursor = conn.cursor()
     try:
