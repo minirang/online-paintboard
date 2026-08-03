@@ -9,40 +9,27 @@ const offscreen = canvas.transferControlToOffscreen();
 const wsProtocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
 const httpProtocol = window.location.protocol;
 const isLocal = import.meta.env.DEV;
-const wsHost = isLocal
+const backendHost = isLocal
     ? `${window.location.hostname}:8000`
     : window.location.host.slice(0, window.location.host.indexOf('.')) + '-backend' + window.location.host.slice(window.location.host.indexOf('.'));
-let wsURI: string = '';
+const tokenUrl = `${httpProtocol}//${backendHost}/api/ws-token`;
+const wsBase = `${wsProtocol}${backendHost}/ws`;
 
-async function startApp() {
-    try {
-        const tokenRes = await fetch(`${httpProtocol}//${wsHost}/api/token`);
-        const tokenData = await tokenRes.json();
-        wsURI = `${wsProtocol}${wsHost}/ws?token=${tokenData.token}`;
-        if (!(window as any).__IS_WORKER_INIT__) {
-            worker.postMessage({
-                type: 'INIT',
-                canvas: offscreen,
-                wsURI: wsURI,
-                width: canvas.width,
-                height: canvas.height
-            }, [offscreen]);
-            (window as any).__IS_WORKER_INIT__ = true;
-        }
-    } catch (error) {
-        console.error("Failed to initialize paintboard security connection:", error);
-    }
+async function initWorker() {
+    const res = await fetch(tokenUrl);
+    const { token } = await res.json();
+    const wsURI = `${wsBase}?token=${token}`;
+    worker.postMessage({
+        type: 'INIT',
+        canvas: offscreen,
+        wsURI: wsURI,
+        width: canvas.width,
+        height: canvas.height
+    }, [offscreen]);
 }
-startApp();
-/*
-worker.postMessage({
-    type: 'INIT',
-    canvas: offscreen,
-    wsURI: wsURI,
-    width: canvas.width,
-    height: canvas.height
-}, [offscreen]);
-*/
+
+initWorker();
+
 const brushColor = document.getElementById('brushColor') as HTMLInputElement;
 const brushColorSpan = document.getElementById('brushColorValue') as HTMLSpanElement;
 brushColor.addEventListener('input', (e) => {
