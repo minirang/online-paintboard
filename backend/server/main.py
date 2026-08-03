@@ -1,6 +1,7 @@
 import os
 import json
 import uuid
+import asyncio
 import psycopg2
 from pathlib import Path
 from dotenv import load_dotenv
@@ -23,6 +24,36 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+async def save_to_db_background(data):
+    await asyncio.to_thread(_sync_save, data)
+
+
+def _sync_save(data):
+    cursor = conn.cursor()
+    try:
+        cursor.execute(
+            """
+            INSERT INTO draw_history
+            (lastX, lastY, currentX, currentY, color, size)
+            VALUES (%s, %s, %s, %s, %s, %s)
+            """,
+            (
+                data["lastX"],
+                data["lastY"],
+                data["currentX"],
+                data["currentY"],
+                data["color"],
+                data["size"],
+            ),
+        )
+        conn.commit()
+    except Exception as e:
+        conn.rollback()
+        print("Database error:", e)
+    finally:
+        cursor.close()
 
 
 @app.get("/")
@@ -88,28 +119,11 @@ async def websocket_endpoint(websocket: WebSocket, token: str = Query(None)):
             data = json.loads(raw_data)
             if not (1 <= int(data["size"]) <= 20):
                 continue
-            cursor.execute(
-                """
-                INSERT INTO draw_history
-                (lastX, lastY, currentX, currentY, color, size)
-                VALUES (%s, %s, %s, %s, %s, %s)
-                """,
-                (
-                    data["lastX"],
-                    data["lastY"],
-                    data["currentX"],
-                    data["currentY"],
-                    data["color"],
-                    data["size"],
-                ),
-            )
 
-            conn.commit()
             for connection in active_connections[:]:
                 if connection == websocket:
                     continue
                 try:
-
                     await connection.send_text(raw_data)
                 except Exception as e:
                     print("Removing dead websocket:", e)
@@ -119,6 +133,8 @@ async def websocket_endpoint(websocket: WebSocket, token: str = Query(None)):
                         await connection.close()
                     except Exception:
                         pass
+
+            asyncio.create_task(save_to_db_background(data))
 
     except WebSocketDisconnect:
         if websocket in active_connections:
