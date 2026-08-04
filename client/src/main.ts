@@ -2,33 +2,24 @@ import './style.scss';
 
 const canvas = document.getElementById('canvas') as HTMLCanvasElement;
 const canvasContainer = document.querySelector('.canvas_container') as HTMLDivElement;
-canvas.width = 12800;
-canvas.height = 9600;
+canvas.width = 6400;
+canvas.height = 4800;
 const worker = new Worker(new URL('./paint.worker.ts', import.meta.url), { type: 'module' });
 const offscreen = canvas.transferControlToOffscreen();
 const wsProtocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
-const httpProtocol = window.location.protocol;
 const isLocal = import.meta.env.DEV;
-const backendHost = isLocal
+const wsHost = isLocal
     ? `${window.location.hostname}:8000`
     : window.location.host.slice(0, window.location.host.indexOf('.')) + '-backend' + window.location.host.slice(window.location.host.indexOf('.'));
-const tokenUrl = `${httpProtocol}//${backendHost}/api/ws-token`;
-const wsBase = `${wsProtocol}${backendHost}/ws`;
+const wsURI = `${wsProtocol}${wsHost}/ws`;
 
-async function initWorker() {
-    const res = await fetch(tokenUrl);
-    const { token } = await res.json();
-    const wsURI = `${wsBase}?token=${token}`;
-    worker.postMessage({
-        type: 'INIT',
-        canvas: offscreen,
-        wsURI: wsURI,
-        width: canvas.width,
-        height: canvas.height
-    }, [offscreen]);
-}
-
-initWorker();
+worker.postMessage({
+    type: 'INIT',
+    canvas: offscreen,
+    wsURI: wsURI,
+    width: canvas.width,
+    height: canvas.height
+}, [offscreen]);
 
 const brushColor = document.getElementById('brushColor') as HTMLInputElement;
 const brushColorSpan = document.getElementById('brushColorValue') as HTMLSpanElement;
