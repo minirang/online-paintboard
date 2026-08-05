@@ -8,8 +8,7 @@ let currentTargetY = 0;
 let currentConfig = { color: '#000000', size: 5 };
 let animationFrameId: number | null = null;
 let lastSentTime = 0;
-const SEND_INTERVAL_MS = 16;
-const MIN_DISTANCE_SQUARED = 4;
+const SEND_INTERVAL_MS = 8;
 
 const distSq = (ax: number, ay: number, bx: number, by: number) => {
     const dx = ax - bx;
@@ -32,18 +31,16 @@ const renderLoop = () => {
 
         const now = performance.now();
         if (ws && ws.readyState === WebSocket.OPEN && now - lastSentTime >= SEND_INTERVAL_MS) {
-            if (distSq(lastX, lastY, smoothX, smoothY) >= MIN_DISTANCE_SQUARED) {
-                const drawData = {
-                    lastX: lastX,
-                    lastY: lastY,
-                    currentX: smoothX,
-                    currentY: smoothY,
-                    color: currentConfig.color,
-                    size: currentConfig.size
-                };
-                ws.send(JSON.stringify(drawData));
-                lastSentTime = now;
-            }
+            const drawData = {
+                lastX: lastX,
+                lastY: lastY,
+                currentX: smoothX,
+                currentY: smoothY,
+                color: currentConfig.color,
+                size: currentConfig.size
+            };
+            ws.send(JSON.stringify(drawData));
+            lastSentTime = now;
         }
 
         lastX = smoothX;
