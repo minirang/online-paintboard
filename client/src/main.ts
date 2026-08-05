@@ -6,20 +6,14 @@ canvas.width = 6400;
 canvas.height = 4800;
 const worker = new Worker(new URL('./paint.worker.ts', import.meta.url), { type: 'module' });
 const offscreen = canvas.transferControlToOffscreen();
+
 const wsProtocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
 const isLocal = import.meta.env.DEV;
 const wsHost = isLocal
     ? `${window.location.hostname}:8000`
     : window.location.host.slice(0, window.location.host.indexOf('.')) + '-backend' + window.location.host.slice(window.location.host.indexOf('.'));
-const wsURI = `${wsProtocol}${wsHost}/ws`;
-
-worker.postMessage({
-    type: 'INIT',
-    canvas: offscreen,
-    wsURI: wsURI,
-    width: canvas.width,
-    height: canvas.height
-}, [offscreen]);
+const httpProtocol = window.location.protocol;
+const httpBase = `${httpProtocol}//${wsHost}`;
 
 const brushColor = document.getElementById('brushColor') as HTMLInputElement;
 const brushColorSpan = document.getElementById('brushColorValue') as HTMLSpanElement;
@@ -53,8 +47,7 @@ paintToggle.addEventListener('click', () => {
         isPaintMode = false;
         toggleText.textContent = '이동 모드';
         canvas.classList.add('is-dragging');
-    }
-    else if (isPaintMode === false) {
+    } else if (isPaintMode === false) {
         isPaintMode = true;
         toggleText.textContent = '그리기 모드';
         canvas.classList.remove('is-dragging');
@@ -68,8 +61,7 @@ canvas.addEventListener('pointerdown', (e: PointerEvent) => {
         startY = e.clientY;
         startScrollLeft = canvasContainer.scrollLeft;
         startScrollTop = canvasContainer.scrollTop;
-    }
-    else if (isPaintMode === true) {
+    } else if (isPaintMode === true) {
         isDrawing = true;
         worker.postMessage({
             type: 'DRAW_START',
@@ -106,3 +98,25 @@ window.addEventListener('pointerup', () => {
         worker.postMessage({ type: 'DRAW_END' });
     }
 });
+
+async function init() {
+    try {
+        const tokenRes = await fetch(`${httpBase}/api/token`);
+        if (!tokenRes.ok) {
+            throw new Error('Token request failed');
+        }
+        const { token } = await tokenRes.json();
+        const wsURI = `${wsProtocol}${wsHost}/ws?token=${token}`;
+        worker.postMessage({
+            type: 'INIT',
+            canvas: offscreen,
+            wsURI: wsURI,
+            width: canvas.width,
+            height: canvas.height
+        }, [offscreen]);
+    } catch (err) {
+        console.error('Failed to initialize WebSocket session:', err);
+    }
+}
+
+init();
