@@ -62,6 +62,8 @@ self.onmessage = (e: MessageEvent) => {
             ctx.lineJoin = 'round';
 
             ws = new WebSocket(wsURI);
+            ws.onclose = () => self.postMessage({ type: 'WS_CLOSED' });
+            ws.onerror = () => ws?.close();
             ws.onopen = () => {
                 console.log('Worker: WebSocket connection established');
             };

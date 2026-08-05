@@ -34,6 +34,7 @@ const toggleText = document.querySelector('.toggle_text') as HTMLSpanElement;
 let isDrawing: boolean = false;
 let isPaintMode: boolean = true;
 let isScroll: boolean = false;
+let isReconnecting = false;
 let startX = 0;
 let startY = 0;
 let startScrollLeft = 0;
@@ -115,14 +116,25 @@ async function init() {
             width: canvas.width,
             height: canvas.height
         }, [offscreen]);
+        isReconnecting = false;
     } catch (err) {
         console.error('Failed to initialize WebSocket session:', err);
-        loadingOverlay.textContent = '로드 실패. 새로고침 해주세요.';
+        loadingOverlay.textContent = '로드 실패. 4초 후 다시 시도합니다...';
+        setTimeout(init, 4000);
     }
 }
 worker.addEventListener('message', (e) => {
     if (e.data.type === 'LOAD_COMPLETE') {
         loadingOverlay.style.display = 'none';
+    }
+    if (e.data.type === 'WS_CLOSED') {
+        if (!isReconnecting) {
+            isReconnecting = true;
+            loadingOverlay.style.display = 'flex';
+            loadingOverlay.textContent = '연결이 끊어졌습니다. 다시 연결 중...';
+            console.error('WebSocket connection closed. Attempting to reconnect...');
+            setTimeout(init, 2000);
+        }
     }
 });
 
