@@ -66,8 +66,8 @@ canvas.addEventListener('pointerdown', (e: PointerEvent) => {
         isDrawing = true;
         worker.postMessage({
             type: 'DRAW_START',
-            offsetX: e.offsetX,
-            offsetY: e.offsetY,
+            offsetX: (e as any).layerX,
+            offsetY: (e as any).layerY,
             color: brushColor.value,
             size: Number(brushSize.value)
         });
@@ -77,8 +77,8 @@ canvas.addEventListener('pointermove', (e: PointerEvent) => {
     if (isDrawing === true && isPaintMode === true) {
         worker.postMessage({
             type: 'DRAW_MOVE',
-            offsetX: e.offsetX,
-            offsetY: e.offsetY,
+            offsetX: (e as any).layerX,
+            offsetY: (e as any).layerY,
             color: brushColor.value,
             size: Number(brushSize.value)
         });
