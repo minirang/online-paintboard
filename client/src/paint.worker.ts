@@ -84,6 +84,7 @@ self.onmessage = (e: MessageEvent) => {
                         ctx.lineTo(stroke.currentX, stroke.currentY);
                         ctx.stroke();
                     }
+                    self.postMessage({ type: 'LOAD_COMPLETE' });
                     return;
                 }
                 ctx.strokeStyle = rawData.color;

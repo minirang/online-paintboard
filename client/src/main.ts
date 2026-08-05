@@ -1,5 +1,6 @@
 import './style.scss';
 
+const loadingOverlay = document.getElementById('loading') as HTMLDivElement;
 const canvas = document.getElementById('canvas') as HTMLCanvasElement;
 const canvasContainer = document.querySelector('.canvas_container') as HTMLDivElement;
 canvas.width = 7200;
@@ -116,7 +117,13 @@ async function init() {
         }, [offscreen]);
     } catch (err) {
         console.error('Failed to initialize WebSocket session:', err);
+        loadingOverlay.textContent = '로드 실패. 새로고침 해주세요.';
     }
 }
+worker.addEventListener('message', (e) => {
+    if (e.data.type === 'LOAD_COMPLETE') {
+        loadingOverlay.style.display = 'none';
+    }
+});
 
 init();

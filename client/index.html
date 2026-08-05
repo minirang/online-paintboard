@@ -13,7 +13,8 @@
     <meta property="og:title" content="Online Paintboard" />
     <meta property="og:description"
         content="Online Paintboard is a collaborative drawing application that allows users to create and share artwork in real-time." />
-    <meta property="og:image" content="https://raw.githubusercontent.com/minirang/online-paintboard/main/client/public/images/thumbnail.png" />
+    <meta property="og:image"
+        content="https://raw.githubusercontent.com/minirang/online-paintboard/main/client/public/images/thumbnail.png" />
     <meta property="og:image:width" content="6400" />
     <meta property="og:image:height" content="4800" />
     <meta property="og:url" content="https://online-paintboard.onrender.com" />
@@ -24,8 +25,7 @@
     <header>
         <div class="logo_area">
             <a href="https://minirang.vercel.app">
-                <img src="/images/logo.svg" alt="Logo" height="40"
-                    title="개발자의 웹사이트로 이동">
+                <img src="/images/logo.svg" alt="Logo" height="40" title="개발자의 웹사이트로 이동">
             </a>
             <h1 style="cursor: default;">Online Paintboard</h1>
         </div>
@@ -50,6 +50,22 @@
         </div>
     </header>
     <div class="canvas_container">
+        <div id="loading" style="
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 35px;
+            font-weight: bold;
+            z-index: 9999;
+            cursor: wait;">
+            그림 로드 중...</div>
         <canvas id="canvas"></canvas>
     </div>
 
