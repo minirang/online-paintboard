@@ -19,6 +19,7 @@
     <meta property="og:image:height" content="4800" />
     <meta property="og:url" content="https://online-paintboard.onrender.com" />
     <link rel="icon" type="image/svg+xml" href="/images/logo.svg" />
+    <link rel="manifest" href="/manifest.json">
 </head>
 
 <body>
@@ -31,7 +32,7 @@
         </div>
         <div class="control_area">
             <div class="toggle">
-                <label class="switch_label" for="paintToggle" title="그리기/이동모드 변경">
+                <label class="switch_label" for="paintToggle" title="Switch between drawing and moving mode">
                     <input type="checkbox" id="paintToggle" class="switch_input">
                     <span class="switch_slider"></span>
                 </label>
@@ -39,12 +40,12 @@
             </div>
 
             <div class="slider_row">
-                <input type="range" id="brushSize" min="1" max="20" value="5" title="붓 크기">
+                <input type="range" id="brushSize" min="1" max="20" value="5" title="Brush Size">
                 <p>Brush Size: <span id="brushSizeValue">5</span></p>
             </div>
 
             <div class="color_row">
-                <input type="color" id="brushColor" value="#000000" title="붓 색깔">
+                <input type="color" id="brushColor" value="#000000" title="Brush Color">
                 <p>Brush Color: <span id="brushColorValue">#000000</span></p>
             </div>
         </div>

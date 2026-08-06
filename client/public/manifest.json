@@ -1,0 +1,18 @@
+{
+    "name": "Online Paintboard",
+    "short_name": "Paintboard",
+    "description": "Simple online collaborative paintboard application.",
+    "lang": "en",
+    "start_url": ".",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#2196f3",
+    "orientation": "any",
+    "icons": [
+        {
+            "src": "/images/manifest.svg",
+            "sizes": "any",
+            "type": "image/svg+xml"
+        }
+    ]
+}
