@@ -18,7 +18,7 @@ const distSq = (ax: number, ay: number, bx: number, by: number) => {
 
 const renderLoop = () => {
     if (!ctx) return;
-    if (isDrawing) {
+    if (isDrawing && (Math.abs(lastX - currentTargetX) > 0.1 || Math.abs(lastY - currentTargetY) > 0.1)) {
         const smoothX = lastX * 0.9 + currentTargetX * 0.1;
         const smoothY = lastY * 0.9 + currentTargetY * 0.1;
 
