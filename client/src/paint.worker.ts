@@ -95,7 +95,7 @@ self.onmessage = (e: MessageEvent) => {
             };
             break;
 
-        case 'DRAW_START':
+        case 'DRAW_START': {
             if (!ctx) return;
             isDrawing = true;
             lastX = offsetX;
@@ -131,6 +131,7 @@ self.onmessage = (e: MessageEvent) => {
                 renderLoop();
             }
             break;
+        }
 
         case 'DRAW_MOVE':
             if (!ctx) return;
