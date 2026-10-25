@@ -111,14 +111,14 @@ self.onmessage = (e: MessageEvent) => {
             ctx.moveTo(lastX, lastY);
             ctx.lineTo(offsetX, offsetY);
             ctx.stroke();
-            ctx.lineTo(offsetX + 0.1, offsetY + 0.1);
+            ctx.lineTo(offsetX + 0.15, offsetY + 0.15);
             ctx.stroke();
 
             const startData = {
                 lastX: offsetX,
                 lastY: offsetY,
-                currentX: offsetX + 0.1,
-                currentY: offsetY + 0.1,
+                currentX: offsetX + 0.15,
+                currentY: offsetY + 0.15,
                 color: color,
                 size: size
             };
